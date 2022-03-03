@@ -1,6 +1,7 @@
 package com.example.tictactoegame.ui.theme
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -90,7 +91,6 @@ fun PlayButton(player: String, state: GridState) {
     val hashMap = HashMap<String, GridState>()
     hashMap["X"] = GridState.X
     hashMap["O"] = GridState.O
-    var bgColor = if (hashMap[player] == state) Color.White else Color.Gray
     var textColor = if (hashMap[player] == state) {
         if (player == "X")
             Color.Blue
@@ -98,19 +98,21 @@ fun PlayButton(player: String, state: GridState) {
             Color.Red
     } else Color.Black
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .height(200.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         Card(
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape),
             elevation = 8.dp,
-            backgroundColor = bgColor
         ) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = player, color = textColor)
             }
         }
-        if(hashMap[player] == state){
+        AnimatedVisibility(visible =hashMap[player] == state ) {
             Text(text = "轮到你了", color = textColor)
         }
     }
