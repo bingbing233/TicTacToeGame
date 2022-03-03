@@ -1,18 +1,19 @@
 package com.example.tictactoegame
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
 
-    var curState = GridState.X
+    var curState = MutableLiveData(GridState.X)
 
     fun changeCurGridState() {
-        when (curState) {
+        when (curState.value) {
             GridState.X -> {
-                curState = GridState.O
+                curState.value = GridState.O
             }
             GridState.O -> {
-                curState = GridState.X
+                curState.value = GridState.X
             }
             else -> {
 
