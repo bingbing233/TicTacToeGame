@@ -1,5 +1,6 @@
 package com.example.tictactoegame.ui.theme
 
+import android.os.Build.VERSION_CODES.Q
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -31,7 +32,7 @@ fun GameBoard() {
     val curState = viewModel.curState.observeAsState()
     val stateList = ArrayList<MutableState<GridState>>().apply {
         repeat(9) {
-            var state = remember {
+            val state = remember {
                 mutableStateOf(GridState.None)
             }
             add(state)
@@ -75,14 +76,14 @@ fun GameGrid(state: GridState, onClick: () -> Unit) {
             .background(color = GridColor), contentAlignment = Alignment.Center) {
         Log.e(TAG, "GameGrid: ${state.name}")
 
-        when (state) {
-            GridState.X -> {
-                Text(text = "X", color = Color.Blue, fontSize = 18.sp)
-            }
-            GridState.O -> {
-                Text(text = "O", color = Color.Red, fontSize = 18.sp)
-            }
+        AnimatedVisibility(visible = state == GridState.X) {
+            Text(text = "X", color = Color.Blue, fontSize = 18.sp)
         }
+
+        AnimatedVisibility(visible = state == GridState.O) {
+            Text(text = "O", color = Color.Red, fontSize = 18.sp)
+        }
+
     }
 }
 
