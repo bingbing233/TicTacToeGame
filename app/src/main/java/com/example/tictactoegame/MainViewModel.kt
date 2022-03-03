@@ -1,26 +1,18 @@
 package com.example.tictactoegame
 
-import androidx.compose.runtime.remember
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
 
-        val gridStateList = MutableLiveData<ArrayList<GridState>>(ArrayList()).apply {
-        repeat(9){
-            this.value?.add(GridState.None)
-        }
-    }
-
-    var curState = MutableLiveData(GridState.X)
+    var curState = GridState.X
 
     fun changeCurGridState() {
-        when (curState.value) {
+        when (curState) {
             GridState.X -> {
-                curState.value = GridState.O
+                curState = GridState.O
             }
             GridState.O -> {
-                curState.value = GridState.X
+                curState = GridState.X
             }
             else -> {
 

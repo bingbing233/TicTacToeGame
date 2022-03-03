@@ -4,12 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,38 +23,47 @@ import com.google.accompanist.flowlayout.FlowRow
 fun GameBoard() {
 
     val TAG = "GameBoard"
-    val viewModel:MainViewModel = viewModel()
-    val gridStateList = viewModel.gridStateList.observeAsState()
+    val viewModel: MainViewModel = viewModel()
+    val stateList = ArrayList<MutableState<GridState>>().apply {
+        repeat(9) {
+            var state =  remember {
+                mutableStateOf(GridState.None)
+            }
+            add(state)
+        }
+    }
+
 
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         FlowRow(Modifier.width(300.dp)) {
             repeat(9){
-                GameGrid(gridStateList.value!![it]){
-                    val stateList = viewModel.gridStateList.value
-                    stateList!![it] = viewModel.curState.value!!
-                    viewModel.gridStateList.postValue(stateList)
+                GameGrid(stateList[it].value){
+                    stateList[it].value = viewModel.curState
                     viewModel.changeCurGridState()
-                    Log.e(TAG, "GameBoard: curState = ${viewModel.curState.value!!.name}", )
+                    Log.e(TAG, "GameBoard: ${stateList.get(it)}]", )
                 }
             }
         }
     }
+
 }
 
 @Composable
-fun GameGrid(state: GridState = GridState.None,onClick:()->Unit) {
+fun GameGrid(state: GridState, onClick: () -> Unit) {
+    val TAG = "Grid"
     Box(
         Modifier
             .size(100.dp)
             .border(width = 1.dp, color = Color.White)
             .clickable { onClick() }
             .background(color = Color.Gray), contentAlignment = Alignment.Center) {
-        when(state){
+        Log.e(TAG, "GameGrid: ${state.name}")
+        when (state) {
             GridState.X -> {
-                Text(text = "X")
+                Text(text = "X", color = Color.Blue)
             }
             GridState.O -> {
-                Text(text = "O")
+                Text(text = "O", color = Color.Red)
             }
         }
     }
@@ -67,3 +74,4 @@ fun GameGrid(state: GridState = GridState.None,onClick:()->Unit) {
 fun GameBoardPrev() {
     GameBoard()
 }
+
