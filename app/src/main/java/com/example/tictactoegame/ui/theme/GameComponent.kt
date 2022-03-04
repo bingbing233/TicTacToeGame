@@ -2,7 +2,10 @@ package com.example.tictactoegame.ui.theme
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -81,7 +84,7 @@ fun GameGrid(state: GridState, onClick: () -> Unit) {
     var enable by remember {
         mutableStateOf(true)
     }
-    val animation:Float by animateFloatAsState( if (enable) 0f else 360f)
+    val animation:Float by animateFloatAsState( if (enable) 0f else 180f, animationSpec = TweenSpec(durationMillis = 800))
     Box(
         Modifier
             .size(100.dp)
