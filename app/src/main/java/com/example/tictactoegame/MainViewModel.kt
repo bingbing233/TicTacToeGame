@@ -1,6 +1,5 @@
 package com.example.tictactoegame
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
