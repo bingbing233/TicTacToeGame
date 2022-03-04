@@ -33,7 +33,7 @@ fun GameBoard() {
     val TAG = "GameBoard"
     val viewModel: MainViewModel = viewModel()
     val curState = viewModel.curState.observeAsState()
-
+    val step = viewModel.step.observeAsState()
     val gridStates = ArrayList<State<GridState>>().apply {
         viewModel.allGrid.forEach {
             this.add(it.observeAsState() as State<GridState>)
@@ -51,13 +51,17 @@ fun GameBoard() {
 
         FlowRow(Modifier.width(300.dp)) {
             repeat(9) {
-                Log.e(TAG, "GameBoard: gridStates.size = ${gridStates.size}", )
                 GameGrid(gridStates[it].value) {
+                    viewModel.step.value = viewModel.step.value!!+1
                     viewModel.allGrid[it].value = curState.value
                     if (viewModel.judgeWin(it)) {
                         viewModel.gameState.value = GameState.Win
                         viewModel.winner.value = curState.value!!.name
                     }
+                    if(step.value == 9){
+                        viewModel.gameState.value = GameState.Draw
+                    }
+                    Log.e(TAG, "GameBoard: step = ${step.value}", )
                     viewModel.changeCurGridState()
                 }
             }
@@ -71,7 +75,6 @@ fun GameBoard() {
 
 @Composable
 fun GameGrid(state: GridState, onClick: () -> Unit) {
-    val TAG = "Grid"
     Box(
         Modifier
             .size(100.dp)
@@ -80,7 +83,6 @@ fun GameGrid(state: GridState, onClick: () -> Unit) {
                 onClick()
             }
             .background(color = GridColor), contentAlignment = Alignment.Center) {
-        Log.e(TAG, "GameGrid: ${state.name}")
 
         AnimatedVisibility(visible = state == GridState.X) {
             Text(text = "X", color = Color.Blue, fontSize = 18.sp)
@@ -135,7 +137,16 @@ fun WinDialog(winner: String) {
     AlertDialog(
         onDismissRequest = { /*TODO*/ },
         title = { Text(text = "游戏结束") },
-        text = { Text(text = "Congratulation!! Winner is $winner") },
+        text = { 
+               when(viewModel.gameState.value){
+                   GameState.Win ->{
+                        Text(text = "玩家$winner 获得胜利！！")
+                   }
+                   GameState.Draw->{
+                       Text(text = "平局")
+                   }
+               }
+        },
         dismissButton = {
             TextButton(onClick = { viewModel.gameState.value = GameState.Start }) {
                 Text(text = "结束")

@@ -9,6 +9,7 @@ class MainViewModel : ViewModel() {
     var curState = MutableLiveData(GridState.X)
     var gameState = MutableLiveData(GameState.Start)
     var winner = MutableLiveData("")
+    var step = MutableLiveData(0) //走了几步
 
     val allGrid = ArrayList<MutableLiveData<GridState>>().apply {
         repeat(9){
@@ -95,4 +96,5 @@ enum class GameState {
     Start,//开始
     Gaming,//游戏中
     Win,//胜利
+    Draw//平局
 }

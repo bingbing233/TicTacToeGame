@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
                         GameBoard()
 
-                        AnimatedVisibility(visible = gameState.value == GameState.Win) {
+                        AnimatedVisibility(visible = gameState.value == GameState.Win || gameState.value == GameState.Draw) {
                             WinDialog(winner = viewModel.winner.value!!)
                         }
                     }
