@@ -64,4 +64,5 @@ dependencies {
 
     def accompanist_version = "0.24.3-alpha"
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 }

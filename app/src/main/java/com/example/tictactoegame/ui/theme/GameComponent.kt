@@ -8,8 +8,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -19,7 +21,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tictactoegame.GameState
 import com.example.tictactoegame.GridState
 import com.example.tictactoegame.MainViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -52,6 +57,10 @@ fun GameBoard() {
             repeat(9) {
                 GameGrid(stateList[it].value) {
                     stateList[it].value = viewModel.curState.value!!
+                    if (viewModel.judgeWin(it, stateList)) {
+                        viewModel.gameState.value = GameState.Win
+                        viewModel.winner.value = curState.value!!.name
+                    }
                     viewModel.changeCurGridState()
                     Log.e(TAG, "GameBoard: ${stateList.get(it)}]")
                 }
@@ -60,6 +69,7 @@ fun GameBoard() {
 
         Spacer(modifier = Modifier.height(20.dp))
         PlayButton(player = "O", state = curState.value!!)
+
     }
 }
 
@@ -102,7 +112,10 @@ fun PlayButton(player: String, state: GridState) {
     Column(
         Modifier
             .fillMaxWidth()
-            .height(200.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+            .height(200.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Card(
             modifier = Modifier
                 .size(100.dp)
@@ -113,11 +126,32 @@ fun PlayButton(player: String, state: GridState) {
                 Text(text = player, color = textColor)
             }
         }
-        AnimatedVisibility(visible =hashMap[player] == state ) {
+        AnimatedVisibility(visible = hashMap[player] == state) {
             Text(text = "轮到你了", color = textColor)
         }
     }
 
+}
+
+@Composable
+fun WinDialog(winner: String) {
+    val viewModel:MainViewModel = viewModel()
+    AlertDialog(
+        onDismissRequest = { /*TODO*/ },
+        title = { Text(text = "游戏结束") },
+        text = { Text(text = "Congratulation!! Winner is $winner") },
+        dismissButton = {
+            TextButton(onClick = { viewModel.gameState.value = GameState.Start }) {
+                Text(text = "结束")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {viewModel.gameState.value = GameState.Start }) {
+                Text(text = "重玩")
+            }
+        },
+        properties = DialogProperties()
+    )
 }
 
 @Preview
