@@ -10,6 +10,12 @@ class MainViewModel : ViewModel() {
     var gameState = MutableLiveData(GameState.Start)
     var winner = MutableLiveData("")
 
+    val allGrid = ArrayList<MutableLiveData<GridState>>().apply {
+        repeat(9){
+            add(MutableLiveData(GridState.None))
+        }
+    }
+
     fun changeCurGridState() {
         when (curState.value) {
             GridState.X -> {
@@ -27,7 +33,7 @@ class MainViewModel : ViewModel() {
     /**
      * 判断游戏是否结束
      */
-    fun judgeWin(curGrid: Int, allGrid: ArrayList<MutableState<GridState>>): Boolean {
+    fun judgeWin(curGrid: Int): Boolean {
         if (curGrid in 0..2) {
             if (allGrid[curGrid].value == allGrid[curGrid + 3].value && allGrid[curGrid].value == allGrid[curGrid + 6].value) {
                 return true
@@ -66,6 +72,13 @@ class MainViewModel : ViewModel() {
             }
         }
         return false
+    }
+
+    fun reset(){
+        allGrid.forEach {
+            it.value = GridState.None
+        }
+        curState.value = GridState.X
     }
 }
 

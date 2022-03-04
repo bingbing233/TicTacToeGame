@@ -1,6 +1,5 @@
 package com.example.tictactoegame.ui.theme
 
-import android.os.Build.VERSION_CODES.Q
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tictactoegame.GameState
@@ -35,12 +33,10 @@ fun GameBoard() {
     val TAG = "GameBoard"
     val viewModel: MainViewModel = viewModel()
     val curState = viewModel.curState.observeAsState()
-    val stateList = ArrayList<MutableState<GridState>>().apply {
-        repeat(9) {
-            val state = remember {
-                mutableStateOf(GridState.None)
-            }
-            add(state)
+
+    val gridStates = ArrayList<State<GridState>>().apply {
+        viewModel.allGrid.forEach {
+            this.add(it.observeAsState() as State<GridState>)
         }
     }
 
@@ -55,14 +51,14 @@ fun GameBoard() {
 
         FlowRow(Modifier.width(300.dp)) {
             repeat(9) {
-                GameGrid(stateList[it].value) {
-                    stateList[it].value = viewModel.curState.value!!
-                    if (viewModel.judgeWin(it, stateList)) {
+                Log.e(TAG, "GameBoard: gridStates.size = ${gridStates.size}", )
+                GameGrid(gridStates[it].value) {
+                    viewModel.allGrid[it].value = curState.value
+                    if (viewModel.judgeWin(it)) {
                         viewModel.gameState.value = GameState.Win
                         viewModel.winner.value = curState.value!!.name
                     }
                     viewModel.changeCurGridState()
-                    Log.e(TAG, "GameBoard: ${stateList.get(it)}]")
                 }
             }
         }
@@ -146,7 +142,9 @@ fun WinDialog(winner: String) {
             }
         },
         confirmButton = {
-            TextButton(onClick = {viewModel.gameState.value = GameState.Start }) {
+            TextButton(onClick = {viewModel.gameState.value = GameState.Gaming
+                viewModel.reset()
+            }) {
                 Text(text = "重玩")
             }
         },
